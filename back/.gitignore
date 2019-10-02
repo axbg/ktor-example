@@ -1,7 +1,7 @@
 build
 .gradle
 .gradletasknamecache
-.idea/*
+.idea
 !.idea/runConfigurations
 !.idea/runConfigurations/*
 !.idea/vcs.xml
@@ -33,3 +33,5 @@ bin/
 .konan
 
 .DS_Store
+
+target
