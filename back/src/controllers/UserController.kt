@@ -15,12 +15,13 @@ fun Routing.userController(userService: UserService) {
 
         patch("/") {
             val body : Map<String, String> = call.receive()
+            //also send user id after authentication
             userService.update(body["refreshHour"], body["notificationHour"])
         }
 
         delete("/") {
+            //get user id from authentication
             userService.delete(1)
-
         }
     }
 }

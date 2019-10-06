@@ -17,6 +17,7 @@ fun Routing.taskController(taskService: TaskService) {
 
         post("/") {
             val task: Task = call.receive()
+            println(task)
             call.respond(HttpStatusCode.OK, taskService.create(task))
         }
 

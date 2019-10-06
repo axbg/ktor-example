@@ -16,7 +16,7 @@ object Tasks : IntIdTable() {
     var icon = varchar("icon", 50)
     var text = varchar("text", 255)
     var state = enumerationByName("state", 10, StateType::class.java)
-    var user = entityId("user_id", Users)
+    var user = reference("user_id", Users)
 }
 
 class Task(id: EntityID<Int>) : IntEntity(id) {
