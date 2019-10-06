@@ -1,9 +1,9 @@
 package com.axbg.ctd.services
 
-import com.axbg.ctd.models.Task
+import com.axbg.ctd.models.TaskTO
 
 interface TaskService {
-    fun getAll(): List<Task>
-    fun create(task: Task): Task
-    fun update(attributes: Map<String, String>): Task
+    fun getAll(userId: Long): List<TaskTO>
+    fun create(task: TaskTO, userId: Long): TaskTO
+    fun update(task: TaskTO, userId: Long)
 }

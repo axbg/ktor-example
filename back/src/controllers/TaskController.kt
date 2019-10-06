@@ -1,6 +1,5 @@
 package com.axbg.ctd.controllers
 
-import com.axbg.ctd.models.Task
 import com.axbg.ctd.services.TaskService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -11,19 +10,16 @@ import io.ktor.routing.*
 fun Routing.taskController(taskService: TaskService) {
     route("/task") {
         get("/") {
-            val tasks: List<Task> = taskService.getAll()
-            call.respond(HttpStatusCode.OK, tasks)
+            call.respond(HttpStatusCode.OK, taskService.getAll(1))
         }
 
         post("/") {
-            val task: Task = call.receive()
-            println(task)
-            call.respond(HttpStatusCode.OK, taskService.create(task))
+            call.respond(HttpStatusCode.Created, taskService.create(call.receive(), 1))
         }
 
         patch("/") {
-            val updatedAttributes: Map<String, String> = call.receive()
-            call.respond(HttpStatusCode.OK, taskService.update(updatedAttributes))
+            taskService.update(call.receive(), 1)
+            call.respond(HttpStatusCode.OK)
         }
     }
 }

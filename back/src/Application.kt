@@ -1,5 +1,6 @@
 package com.axbg.ctd
 
+import com.axbg.ctd.config.AppException
 import com.axbg.ctd.controllers.taskController
 import com.axbg.ctd.controllers.userController
 import com.axbg.ctd.models.DatabaseModel
@@ -53,21 +54,16 @@ fun Application.module(testing: Boolean = false) {
 
         userController(ServiceInjector.userService)
         taskController(ServiceInjector.taskService)
+
         install(StatusPages) {
-            exception<AuthenticationException> { cause ->
-                call.respond(HttpStatusCode.Unauthorized, mapOf("message" to "not allowed"))
-            }
-            exception<AuthorizationException> { cause ->
-                call.respond(HttpStatusCode.Forbidden)
+            exception<AppException> { cause ->
+                call.respond(HttpStatusCode.fromValue(cause.status), mapOf("message" to cause.message))
             }
         }
     }
 
     DatabaseModel.init()
 }
-
-class AuthenticationException : RuntimeException()
-class AuthorizationException : RuntimeException()
 
 class ServiceInjector() {
     companion object {
