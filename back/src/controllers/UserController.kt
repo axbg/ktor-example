@@ -1,5 +1,6 @@
 package com.axbg.ctd.controllers
 
+import com.axbg.ctd.models.UserTO
 import com.axbg.ctd.services.UserService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -14,9 +15,8 @@ fun Routing.userController(userService: UserService) {
         }
 
         patch("/") {
-            val body : Map<String, String> = call.receive()
-            //also send user id after authentication
-            userService.update(body["refreshHour"], body["notificationHour"])
+            val user: UserTO = call.receive()
+
         }
 
         delete("/") {

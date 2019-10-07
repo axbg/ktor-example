@@ -17,3 +17,5 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     var notificationHour by Users.notificationHour
     var lastUpdated by Users.lastUpdated
 }
+
+data class UserTO(var id: Long, var mail: String, var refreshHour: String, var notificationHour: String, var lastUpdated: String)
