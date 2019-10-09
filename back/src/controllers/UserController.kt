@@ -1,5 +1,6 @@
 package com.axbg.ctd.controllers
 
+import com.axbg.ctd.UserIdKey
 import com.axbg.ctd.models.UserTO
 import com.axbg.ctd.services.UserService
 import io.ktor.application.call
@@ -10,18 +11,14 @@ import io.ktor.routing.*
 
 fun Routing.userController(userService: UserService) {
     route("/user") {
-        post("/") {
-            userService.login();
-        }
-
         patch("/") {
             val user: UserTO = call.receive()
 
         }
 
         delete("/") {
-            //get user id from authentication
-            userService.delete(1)
+            userService.delete(call.attributes[UserIdKey])
+            call.respond(HttpStatusCode.OK, mapOf("message" to "user deleted"))
         }
     }
 }
