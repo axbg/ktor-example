@@ -13,7 +13,7 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<User>(Users)
 
     var mail by Users.mail
-    var refreshFailedException by Users.refreshHour
+    var refreshHour by Users.refreshHour
     var notificationHour by Users.notificationHour
     var lastUpdated by Users.lastUpdated
 }

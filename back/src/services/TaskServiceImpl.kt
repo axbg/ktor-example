@@ -31,7 +31,6 @@ class TaskServiceImpl : TaskService {
         } catch (e: Exception) {
             throw AppException("An error occured when inserting", 500)
         }
-
         return task
     }
 
