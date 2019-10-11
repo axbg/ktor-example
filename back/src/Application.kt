@@ -2,6 +2,7 @@ package com.axbg.ctd
 
 import com.axbg.ctd.config.AppException
 import com.axbg.ctd.config.Constants
+import com.axbg.ctd.controllers.generateJwt
 import com.axbg.ctd.controllers.publicController
 import com.axbg.ctd.controllers.taskController
 import com.axbg.ctd.controllers.userController
@@ -30,6 +31,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.util.AttributeKey
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
+import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -54,17 +57,21 @@ fun Application.module(testing: Boolean = false) {
     install(Routing) {
         intercept(ApplicationCallPipeline.Setup) {
             if (!Constants.publicRoutes.contains(call.request.path())) {
-                val authorization = call.request.headers["Authorization"] ?: throw AppException("Token not present", 400)
+                val authorization =
+                    call.request.headers["Authorization"] ?: throw AppException("Token not present", 400)
                 val token = authorization.split(" ")[1]
                 val key = Keys.hmacShaKeyFor(Constants.privateKey.toByteArray())
                 try {
                     val claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).body
-
                     transaction {
                         User.findById(claims.subject.toLong()) ?: throw AppException("User not found", 404)
                     }
 
                     call.attributes.put(UserIdKey, claims.subject.toLong())
+
+                    if (claims.expiration > Date.from(Instant.now().minusSeconds(43200))) {
+                        call.response.headers.append("X-REFRESH-JWT", generateJwt(claims.subject.toLong()))
+                    }
                 } catch (ex: JwtException) {
                     throw AppException("JWT is not valid", 400)
                 }

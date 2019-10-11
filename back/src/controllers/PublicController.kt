@@ -22,6 +22,8 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
+import java.util.*
 
 fun Routing.publicController() {
     route("/") {
@@ -38,14 +40,14 @@ fun Routing.publicController() {
 
                 var user: User? = null
 
+
                 transaction {
                     user = User.find { Users.mail eq decodedResponse.email }.firstOrNull()
                 }
 
                 when {
                     user != null -> {
-                        val key = Keys.hmacShaKeyFor(Constants.privateKey.toByteArray())
-                        val token = Jwts.builder().setSubject(user!!.id.toString()).signWith(key).compact()
+                        val token = generateJwt(user!!.id.value)
                         call.respond(mapOf("token" to token))
                     }
                     else -> {
@@ -57,4 +59,14 @@ fun Routing.publicController() {
             }
         }
     }
+}
+
+fun generateJwt(userId: Long): String {
+    val key = Keys.hmacShaKeyFor(Constants.privateKey.toByteArray())
+    return Jwts.builder()
+        .setSubject(userId.toString())
+        .setIssuedAt(Date.from(Instant.now()))
+        .setExpiration(Date.from(Instant.now().plusSeconds(172800)))
+        .signWith(key)
+        .compact()
 }
