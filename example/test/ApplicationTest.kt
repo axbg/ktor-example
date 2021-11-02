@@ -1,20 +1,9 @@
 package com.axbg.ctd
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.features.*
-import io.ktor.routing.*
 import io.ktor.http.*
-import io.ktor.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.features.json.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.*
-import io.ktor.client.features.logging.*
-import kotlin.test.*
 import io.ktor.server.testing.*
+import junit.framework.Assert.assertEquals
+import org.junit.Test
 
 class ApplicationTest {
     @Test

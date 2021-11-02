@@ -8,8 +8,8 @@ class UserServiceImpl : UserService {
     override fun update(user: UserTO): UserTO {
         transaction {
             val userModel = User.findById(user.id)!!
-            if (user.refreshHour != null) userModel.refreshHour = user.refreshHour else user.refreshHour = userModel.refreshHour
-            if (user.notificationHour != null) userModel.notificationHour = user.notificationHour else user.notificationHour = userModel.notificationHour
+            userModel.refreshHour = user.refreshHour
+            userModel.notificationHour = user.notificationHour
             user.lastUpdated = userModel.lastUpdated
         }
         return user

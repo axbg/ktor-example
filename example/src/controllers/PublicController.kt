@@ -8,24 +8,21 @@ import com.axbg.ctd.models.User
 import com.axbg.ctd.models.Users
 import com.axbg.ctd.services.PublicService
 import com.google.gson.Gson
-import io.ktor.application.call
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.ClientRequestException
-import io.ktor.client.request.get
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.application.*
+import io.ktor.client.*
+import io.ktor.client.engine.apache.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Routing.publicController(publicService: PublicService) {
     route("/") {
         get("/") {
-            call.respond(HttpStatusCode.OK, mapOf("message" to "Ktor back-end example"))
+            call.respond(HttpStatusCode.OK, mapOf("message" to "ktor back-end example"))
         }
 
         post("/login") {
@@ -33,7 +30,7 @@ fun Routing.publicController(publicService: PublicService) {
 
             try {
                 val googleResponse = HttpClient(Apache).get<String>(Constants.googleOauthCheck + googleToken.token)
-                val decodedResponse = Gson().fromJson<GoogleData>(googleResponse, GoogleData::class.java)
+                val decodedResponse = Gson().fromJson(googleResponse, GoogleData::class.java)
 
                 var user: User? = null
 

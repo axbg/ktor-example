@@ -3,14 +3,11 @@ package com.axbg.ctd.controllers
 import com.axbg.ctd.UserIdKey
 import com.axbg.ctd.models.UserTO
 import com.axbg.ctd.services.UserService
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.routing.Routing
-import io.ktor.routing.delete
-import io.ktor.routing.patch
-import io.ktor.routing.route
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
 
 fun Routing.userController(userService: UserService) {
     route("/user") {

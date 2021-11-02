@@ -29,7 +29,7 @@ class TaskServiceImpl : TaskService {
                 }.id.value
             }
         } catch (e: Exception) {
-            throw AppException("An error occured when inserting", 500)
+            throw AppException("An error occurred when inserting", 500)
         }
         return task
     }
@@ -49,7 +49,7 @@ class TaskServiceImpl : TaskService {
         } catch (e: NullPointerException) {
             throw AppException("Task was not found", 404)
         } catch (e: Exception) {
-            throw AppException("An error occured when updating", 500)
+            throw AppException("An error occurred when updating", 500)
         }
     }
 }

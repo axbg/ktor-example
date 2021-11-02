@@ -1,15 +1,13 @@
 package com.axbg.ctd.models
 
-import com.axbg.ctd.config.Constants
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseModel {
-    fun init() {
+    fun init(dbDriver: String, dbUrl: String, dbUser: String, dbPassword: String) {
         Database.connect(
-            Constants.DATABASE_URL, driver = Constants.DATABASE_DRIVER, user = Constants.DATABASE_USERNAME,
-            password = Constants.DATABASE_PASSWORD
+            dbUrl, driver = dbDriver, user = dbUser, password = dbPassword
         )
         transaction {
             create(Users)

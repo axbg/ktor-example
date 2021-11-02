@@ -1,6 +1,9 @@
 package com.axbg.ctd.models
 
-import org.jetbrains.exposed.dao.*
+import org.jetbrains.exposed.dao.EntityID
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.LongIdTable
 
 object Users : LongIdTable() {
     var mail = varchar("mail", 60)
@@ -18,4 +21,10 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     var lastUpdated by Users.lastUpdated
 }
 
-data class UserTO(var id: Long, var mail: String, var refreshHour: String, var notificationHour: String, var lastUpdated: String)
+data class UserTO(
+    var id: Long,
+    var mail: String,
+    var refreshHour: String,
+    var notificationHour: String,
+    var lastUpdated: String
+)

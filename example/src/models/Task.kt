@@ -15,7 +15,7 @@ enum class StateType(val status: String) {
 object Tasks : LongIdTable() {
     var icon = varchar("icon", 50)
     var text = varchar("text", 255)
-    var state = enumerationByName("state", 10, StateType::class.java)
+    var state = enumerationByName("state", 10, StateType::class.java.kotlin)
     var user = reference("user_id", Users)
 }
 

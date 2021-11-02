@@ -7,25 +7,20 @@ import com.axbg.ctd.controllers.taskController
 import com.axbg.ctd.controllers.userController
 import com.axbg.ctd.models.DatabaseModel
 import com.axbg.ctd.models.User
-import com.axbg.ctd.services.*
+import com.axbg.ctd.services.PublicServiceImpl
+import com.axbg.ctd.services.TaskServiceImpl
+import com.axbg.ctd.services.UserServiceImpl
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.CORS
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
-import io.ktor.gson.gson
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.path
-import io.ktor.response.respond
-import io.ktor.routing.Routing
-import io.ktor.util.AttributeKey
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.gson.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.util.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.Instant
 import java.util.*
@@ -53,10 +48,10 @@ fun Application.module(testing: Boolean = false) {
     install(Routing) {
         intercept(ApplicationCallPipeline.Setup) {
             if (!Constants.publicRoutes.contains(call.request.path())) {
-                val token = call.request.cookies[Constants.TOKEN_COOKIE]
-                val key = Keys.hmacShaKeyFor(Constants.TOKEN_ENC_KEY.toByteArray())
+                val token = call.request.cookies[environment.config.property("ktor.jwt.cookie_name").getString()]
+                val key = Keys.hmacShaKeyFor(environment.config.property("ktor.jwt.secret").getString().toByteArray())
                 try {
-                    val claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).body
+                    val claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
                     transaction {
                         User.findById(claims.subject.toLong()) ?: throw AppException("User not found", 404)
                     }
@@ -72,9 +67,14 @@ fun Application.module(testing: Boolean = false) {
             }
         }
 
-        publicController(ServiceInjector.publicService)
-        userController(ServiceInjector.userService)
-        taskController(ServiceInjector.taskService)
+        userController(UserServiceImpl())
+        taskController(TaskServiceImpl())
+        publicController(
+            PublicServiceImpl(
+                environment.config.property("ktor.jwt.secret").getString(),
+                environment.config.property("ktor.jwt.cookie_name").getString()
+            )
+        )
 
         install(StatusPages) {
             exception<AppException> { cause ->
@@ -83,15 +83,10 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    DatabaseModel.init()
+    val dbDriver = environment.config.property("ktor.db.driver").getString()
+    val dbUrl = environment.config.property("ktor.db.url").getString()
+    val dbUser = environment.config.property("ktor.db.username").getString()
+    DatabaseModel.init(dbDriver, dbUrl, dbUser, environment.config.property("ktor.db.password").getString())
 }
 
 val UserIdKey = AttributeKey<Long>("userId")
-
-class ServiceInjector() {
-    companion object {
-        val userService: UserService = UserServiceImpl()
-        val taskService: TaskService = TaskServiceImpl()
-        val publicService: PublicService = PublicServiceImpl()
-    }
-}

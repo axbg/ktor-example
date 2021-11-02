@@ -7,5 +7,5 @@ Features a working back-end implemented in Kotlin, using [Ktor](https://ktor.io/
 * CRUD API
 * Relational Database Connection & Models
 * Cookie-based JWT authentication scheme
-* Google OAuth2 integration
+* Custom Google OAuth2 integration
 * Maven
